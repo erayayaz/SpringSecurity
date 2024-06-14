@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.service.TokenService;
 import com.example.demo.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -16,6 +17,11 @@ import java.util.function.Function;
 public class JwtService {
 
     private static final String SECRET_KEY = "66994bbf941cf2993a79e8d206b4c92b06e0ff18d902567e312bd0b6151de90f";
+    private final TokenService tokenService;
+
+    public JwtService(TokenService tokenService) {
+        this.tokenService = tokenService;
+    }
 
     public String generateToken(User user) {
         return Jwts.builder()
@@ -32,7 +38,10 @@ public class JwtService {
 
     public boolean isValid(String token, UserDetails userDetails) {
         String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+
+        boolean isValidToken = tokenService.findTokenByToken(token).map(t -> !t.isLoggedOut()).orElse(false);
+
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && isValidToken;
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> resolver) {
