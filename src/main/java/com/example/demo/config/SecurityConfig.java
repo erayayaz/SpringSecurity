@@ -1,6 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.service.UserDetailsImpl;
+import com.example.demo.service.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -21,12 +21,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UserDetailsImpl userDetails;
+    private final UserService userDetails;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final CustomLogoutHandler customLogoutHandler;
 
-    public SecurityConfig(UserDetailsImpl userDetails, JwtAuthenticationFilter jwtAuthenticationFilter,
+    public SecurityConfig(UserService userDetails, JwtAuthenticationFilter jwtAuthenticationFilter,
                           CustomAccessDeniedHandler customAccessDeniedHandler, CustomLogoutHandler customLogoutHandler) {
         this.userDetails = userDetails;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -37,7 +37,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(req -> req.requestMatchers("/login/**", "/register/**")
+                .authorizeHttpRequests(req -> req.requestMatchers("/login/**", "/register/**", "refresh_token/**")
                         .permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
                         .anyRequest()

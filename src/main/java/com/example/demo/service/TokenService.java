@@ -17,9 +17,10 @@ public class TokenService {
         this.repository = repository;
     }
 
-    public void saveUserToken(String token, User user) {
+    public void saveUserToken(String accessToken, String refreshToken, User user) {
         Token newToken = Token.builder()
-                .token(token)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .loggedOut(false)
                 .user(user)
                 .build();
@@ -31,11 +32,15 @@ public class TokenService {
         return repository.findAllTokenByUser(userId);
     }
 
-    public Optional<Token> findTokenByToken(String token) {
-        return repository.findByToken(token);
+    public Optional<Token> findByAccessToken(String accessToken) {
+        return repository.findByAccessToken(accessToken);
     }
 
     public void saveToken(Token token) {
         repository.save(token);
+    }
+
+    public Optional<Token> findByRefreshToken(String refreshToken) {
+        return repository.findByRefreshToken(refreshToken);
     }
 }

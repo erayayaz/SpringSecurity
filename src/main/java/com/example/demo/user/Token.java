@@ -16,7 +16,8 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
     private boolean loggedOut;
 
     @ManyToOne

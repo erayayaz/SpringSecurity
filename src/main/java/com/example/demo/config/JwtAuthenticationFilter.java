@@ -1,6 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.service.UserDetailsImpl;
+import com.example.demo.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsImpl userDetailsService;
+    private final UserService userDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-            if (jwtService.isValid(token, userDetails)) {
+            if (jwtService.isValidAccessToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken = new
                         UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
